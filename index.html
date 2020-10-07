@@ -2,6 +2,8 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
     <title></title>
     <style>
     * {
@@ -9,6 +11,7 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
       width: 100%;
       height: 100vh;
@@ -16,44 +19,367 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
+      font-family: Roboto Slab;
+      color: rgb(56, 56, 56);
     }
 
     main {
-      max-width: 700px;
       width: 100%;
-      height: 33vh;
-      min-height: calc(75px * 3);
-      padding: 0 15px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-gap: 30px;
+      padding: 5vh 0;
+      text-align: center;
     }
 
-    main * {
+    section + section {
+      margin-block-start: 45px;
+    }
+
+    .centre {
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    #columns-container {
+      width: 100%;
+    }
+
+    #columns-wrapper {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 15px;
+    }
+
+    .column {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 5px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgb(223, 221, 223);
+    }
+
+    .column-heading {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .box {
+      width: 100%;
       display: flex;
       align-items: center;
+      padding: 5px 15px;
+    }
+
+    .box + .box {
+      margin-block-start: 15px;
+    }
+
+    .box-vertical {
+      flex-direction: column;
       justify-content: center;
     }
+
+    .box-vertical .box-details {
+      align-items: center;
+      justify-content: initial;
+      margin-inline-start: 0;
+      margin-block-start: 15px;
+    }
+
+    .box-colour {
+      width: 20%;
+      flex-shrink: 0;
+      position: relative;
+      background-color: rgb(230, 230, 230);
+      border-radius: 50%;
+    }
+
+    .box-colour::before {
+      content: "";
+      display: block;
+      width: 100%;
+      padding-bottom: 100%;
+    }
+
+    .box-colour::after {
+      content: "";
+      display: block;
+      width: 110%;
+      padding-bottom: 110%;
+      border: 2px solid rgb(230, 230, 230);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .box-details {
+      margin-inline-start: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .box-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: rgb(47, 47, 47);
+    }
+
+    .box-value {
+      font-size: 12px;
+    }
+
+    h1 {
+      margin-block-end: 15px;
+    }
+
+    #chaining-container {
+
+    }
+
+    #chaining-wrapper {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .chaining-item {
+      width: 33%;
+      height: 150px;
+    }
+
+    .chaining-item .box-colour {
+      width: 45%;
+    }
+
+    .chaining-interactive {
+      width: 8%;
+    }
+
+    .chaining-interactive input {
+      width: 100%;
+    }
+
+    .chaining-arrow {
+      font-size: 33px;
+    }
+
+    #chaining-origin-colour {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      opacity: 0;
+    }
+
     </style>
   </head>
   <body>
     <main>
-      <prisma-standard><p>Standard</p></prisma-standard>
-      <prisma-fade></prisma-fade>
-      <prisma-fadeout></prisma-fadeout>
-      <prisma-fadein></prisma-fadein>
-      <prisma-lighten></prisma-lighten>
-      <prisma-darken></prisma-darken>
-      <prisma-saturate></prisma-saturate>
-      <prisma-desaturate></prisma-desaturate>
-      <prisma-spin></prisma-spin>
+      <section id="columns-container">
+        <h1>See if this works</h1>
+        <div id="columns-wrapper" class="centre">
+          <div id="hex-column" class="column">
+            <div class="column-heading">
+              <p>Hex</p>
+            </div>
+            <!-- Generated in JS -->
+          </div>
+
+          <div id="rgba-column" class="column">
+            <div class="column-heading">
+              <p>RGBA</p>
+            </div>
+            <!-- Generated in JS -->
+          </div>
+
+          <div id="hsla-column" class="column">
+            <div class="column-heading">
+              <p>HSLA</p>
+            </div>
+            <!-- Generated in JS -->
+          </div>
+
+        </div>
+        <template id="box-template">
+          <div class="box">
+            <div class="box-colour"></div>
+            <div class="box-details">
+              <span class="box-title">Fade 15</span>
+              <span class="box-value">13</span>
+            </div>
+          </div>
+        </template>
+      </section>
+
+      <section id="chaining-container">
+
+        <h1>Demostrate Chaining</h1>
+        <div id="chaining-wrapper" class="centre">
+          <div id="chaining-item-1" class="chaining-item">
+            <div class="box box-vertical">
+              <div class="box-colour" style="background-color: #24cd77">
+                <input type="color" id="chaining-origin-colour" value="#24cd77">
+              </div>
+              <div class="box-details">
+                <span class="box-title">#24cd77</span>
+                <span class="box-value"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chaining-interactive">
+            <select id="chain-interactive-2-method">
+              <option>fade</option>
+              <option>fadeIn</option>
+              <option>fadeOut</option>
+              <option selected>spin</option>
+              <option>lighten</option>
+              <option>darken</option>
+              <option>saturate</option>
+              <option>desaturate</option>
+            </select>
+            <input type="number" id="chain-interactive-2-amount" value="60">
+            <span class="chaining-arrow">➡️</span>
+          </div>
+
+          <div id="chaining-item-2" class="chaining-item">
+            <div class="box box-vertical">
+              <div class="box-colour"></div>
+              <div class="box-details">
+                <span class="box-title"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chaining-interactive">
+            <select id="chain-interactive-3-method">
+              <option>fade</option>
+              <option>fadeIn</option>
+              <option>fadeOut</option>
+              <option selected>spin</option>
+              <option>lighten</option>
+              <option>darken</option>
+              <option>saturate</option>
+              <option>desaturate</option>
+            </select>
+            <input type="number" id="chain-interactive-3-amount" value="60">
+            <span class="chaining-arrow">➡️</span>
+          </div>
+
+          <div id="chaining-item-3" class="chaining-item">
+            <div class="box box-vertical">
+              <div class="box-colour"></div>
+              <div class="box-details">
+                <span class="box-title"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chaining-interactive">
+            <select id="chain-interactive-4-method">
+              <option>fade</option>
+              <option>fadeIn</option>
+              <option>fadeOut</option>
+              <option selected>spin</option>
+              <option>lighten</option>
+              <option>darken</option>
+              <option>saturate</option>
+              <option>desaturate</option>
+            </select>
+            <input type="number" id="chain-interactive-4-amount" value="60">
+            <span class="chaining-arrow">➡️</span>
+          </div>
+
+          <div id="chaining-item-4" class="chaining-item">
+            <div class="box box-vertical">
+              <div class="box-colour"></div>
+              <div class="box-details">
+                <span class="box-title"></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
     </main>
-    <script src="wc.js" type="module"></script>
+
     <script type="module">
       import Prisma from './prisma-colour.js';
+
+      /** Demo **/
+
+      const baseColour = '#24cd77de';
+      const amount = 33;
+      let template = document.getElementById('box-template');
+      let methods = [ 'fade', 'fadeIn', 'fadeOut', 'spin', 'lighten', 'darken', 'saturate', 'desaturate',];
+      let formats = [ 'Hex', 'RGBA', 'HSLA', ];
+
+      formats.forEach(format => {
+        let column = document.getElementById(format.toLowerCase() + '-column');
+
+        methods.forEach(method => {
+          let clone = template.content.cloneNode(true);
+          let colour = new Prisma(baseColour)[method](amount)['get' + format]();
+          clone.querySelector('.box-colour').style.backgroundColor = colour;
+          clone.querySelector('.box-title').textContent = `${method} by ${amount}`;
+          clone.querySelector('.box-value').textContent = new Prisma(colour).getHex();
+          column.appendChild(clone);
+        });
+      });
+
+
+      /** Chain interactives **/
+
+      const chainEffects = (index) => {
+        if ( index > 3 ) return;
+        let input = document.getElementById('chaining-item-' + index);
+        let inputColour = input.querySelector('.box-colour').style.backgroundColor;
+        let method = document.getElementById('chain-interactive-' + (index + 1) +'-method').value;
+        let amount = document.getElementById('chain-interactive-' + (index + 1) +'-amount').value;
+        let output = document.getElementById('chaining-item-' + (index + 1));
+
+        let colour = new Prisma(inputColour)[method](amount).getHex();
+        console.log(amount);
+
+        output.querySelector('.box-colour').style.backgroundColor = colour;
+        output.querySelector('.box-title').textContent = colour;
+        chainEffects(index + 1);
+      }
+
+      document.getElementById('chaining-origin-colour').addEventListener('input', ev => {
+        let parent = ev.currentTarget.closest('.box');
+        parent.querySelector('.box-colour').style.backgroundColor = ev.currentTarget.value;
+        parent.querySelector('.box-title').textContent = ev.currentTarget.value;
+        chainEffects(1);
+      });
+
+      [...document.getElementsByClassName('chaining-interactive')].forEach((el, i) => {
+        el.querySelector('select').addEventListener('change', ev => {
+          chainEffects(i + 1);
+        });
+        el.querySelector('input').addEventListener('input', ev => {
+          chainEffects(i + 1);
+        });
+      });
+
+      chainEffects(1);
+
       console.log(
-        new Prisma('#24cd77').getHSL(),
+        'eh, ' + new Prisma(
+          document.getElementById('chaining-item-' + 1)
+                  .querySelector('.box-colour').style.backgroundColor
+        ).spin(60).getHex()
       );
+
+
     </script>
   </body>
 </html>

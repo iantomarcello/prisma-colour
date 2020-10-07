@@ -43,6 +43,7 @@ class Prisma {
         var h = cols[0] / 360;
         var s = cols[1] / 100;
         var l = cols[2] / 100;
+        // console.log(cols);
         var r, g, b;
         if (s == 0) {
           r = g = b = l; // achromatic
@@ -241,7 +242,7 @@ class Prisma {
   }
 
   getRGBA() {
-    return `rgba(${[...this.rgb, parseInt(this.alpha * 255)].join(',')})`;
+    return `rgba(${[...this.rgb, this.alpha].join(',')})`;
   }
 
   getHex() {
@@ -266,7 +267,7 @@ class Prisma {
   }
 
   getHSLA() {
-    let {h, s, l} = this.#toHSL(this.rgb);
+    let {h, s, l, a} = this.#toHSL(this.rgb);
     let sig = 2;
     return `hsla(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%, ${a})`;
   }
@@ -290,65 +291,65 @@ class Prisma {
 
   /// Operations.
 
-  spin(amount) {
+  spin(amount = 0) {
     let hsl = this.#toHSL(this.rgb);
-    let hue = (hsl.h + amount) % 360;
+    let hue = (hsl.h + parseFloat(amount)) % 360;
     hsl.h = hue < 0 ? 360 + hue : hue;
     this._convert(this.hslaToString(hsl));
     return this;
   }
 
-  fade(amount) {
+  fade(amount = this.alpha) {
     let hsl = this.#toHSL(this.rgb);
-    hsl.a = amount / 100;
+    hsl.a = 1 - parseFloat(amount) / 100;
     hsl.a = this.clamp(hsl.a, 1);
     this._convert(this.hslaToString(hsl));
     return this;
   }
 
-  fadeIn(amount) {
+  fadeIn(amount = 0) {
     let hsl = this.#toHSL(this.rgb);
-    hsl.a += amount / 100;
+    hsl.a += parseFloat(amount) / 100;
     hsl.a = this.clamp(hsl.a, 1);
     this._convert(this.hslaToString(hsl));
     return this;
   }
 
-  fadeOut(amount) {
+  fadeOut(amount = 0) {
     let hsl = this.#toHSL(this.rgb);
-    hsl.a -= amount / 100;
+    hsl.a -= parseFloat(amount) / 100;
     hsl.a = this.clamp(hsl.a, 1);
     this._convert(this.hslaToString(hsl));
     return this;
   }
 
-  lighten(amount) {
+  lighten(amount = 0) {
     let hsl = this.#toHSL(this.rgb);
-    hsl.l += amount;
+    hsl.l += parseFloat(amount);
     hsl.l = this.clamp(hsl.l, 100);
     this._convert(this.hslaToString(hsl));
     return this;
   }
 
-  darken(amount) {
+  darken(amount = 0) {
     let hsl = this.#toHSL(this.rgb);
-    hsl.l -= amount;
+    hsl.l -= parseFloat(amount);
     hsl.l = this.clamp(hsl.l, 100);
     this._convert(this.hslaToString(hsl));
     return this;
   }
 
-  saturate(amount) {
+  saturate(amount = 0) {
     let hsl = this.#toHSL(this.rgb);
-    hsl.s += amount;
+    hsl.s += parseFloat(amount);
     hsl.s = this.clamp(hsl.s, 100);
     this._convert(this.hslaToString(hsl));
     return this;
   }
 
-  desaturate(amount) {
+  desaturate(amount = 0) {
     let hsl = this.#toHSL(this.rgb);
-    hsl.s -= amount;
+    hsl.s -= parseFloat(amount);
     hsl.s = this.clamp(hsl.s, 100);
     this._convert(this.hslaToString(hsl));
     return this;
