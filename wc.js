@@ -1,7 +1,7 @@
 import prisma from "./index.js";
 
 // const farbe = 'rgba(36, 205, 119, 0.60)';
-const farbe = '#24cd7799';
+const farbe = 'rgb(36, 205, 119)';
 
 class Standard extends HTMLElement {
   constructor(content = `Standard`) {

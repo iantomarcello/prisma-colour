@@ -18,21 +18,42 @@
       justify-content: center;
     }
 
-    body * {
-      margin-right: 15px;
+    main {
+      max-width: 700px;
+      width: 100%;
+      height: 33vh;
+      min-height: calc(75px * 3);
+      padding: 0 15px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 30px;
+    }
+
+    main * {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     </style>
   </head>
   <body>
-    <prisma-standard><p>Standard</p></prisma-standard>
-    <prisma-fade></prisma-fade>
-    <prisma-fadeout></prisma-fadeout>
-    <prisma-fadein></prisma-fadein>
-    <prisma-lighten></prisma-lighten>
-    <prisma-darken></prisma-darken>
-    <prisma-saturate></prisma-saturate>
-    <prisma-desaturate></prisma-desaturate>
-    <prisma-spin></prisma-spin>
+    <main>
+      <prisma-standard><p>Standard</p></prisma-standard>
+      <prisma-fade></prisma-fade>
+      <prisma-fadeout></prisma-fadeout>
+      <prisma-fadein></prisma-fadein>
+      <prisma-lighten></prisma-lighten>
+      <prisma-darken></prisma-darken>
+      <prisma-saturate></prisma-saturate>
+      <prisma-desaturate></prisma-desaturate>
+      <prisma-spin></prisma-spin>
+    </main>
     <script src="wc.js" type="module"></script>
+    <script type="module">
+      import Prisma from './prisma-colour.js';
+      console.log(
+        new Prisma('#24cd77').getHSL(),
+      );
+    </script>
   </body>
 </html>

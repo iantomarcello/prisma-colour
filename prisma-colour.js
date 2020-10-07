@@ -1,12 +1,13 @@
 class Prisma {
-  constructor() {
+  constructor(raw) {
+    this.raw = raw;
     this.rgb = new Array;
     this.alpha = 1;
+    this._convert(this.raw);
   }
 
-  _reset() {
-    this.rgb = new Array;
-    this.alpha = 1;
+  reset() {
+    this._convert(this.raw);
   }
 
   clamp(v, max) {
@@ -32,13 +33,12 @@ class Prisma {
         break;
 
       case (colour.includes("hsl")): /// HSL to RGB
-        colour = colour.includes(",") && colour.split(",").shift();
         var cols;
         if (colour.includes("a")) {
-          cols = colour.substr(5).slice(0, -1).split(",").map(c => parseInt(c));
+          cols = colour.substr(5).slice(0, -1).split(",").map(c => parseFloat(c));
           this.alpha = cols.pop();
         } else {
-          cols = colour.substr(4).slice(0, -1).split(",").map(c => parseInt(c));
+          cols = colour.substr(4).slice(0, -1).split(",").map(c => parseFloat(c));
         }
         var h = cols[0] / 360;
         var s = cols[1] / 100;
@@ -63,17 +63,21 @@ class Prisma {
           b = hue2rgb(p, q, h - 1 / 3);
         }
 
-        this.rgb = [r * 255, g * 255, b * 255];
+        this.rgb = [
+          parseInt(r * 255),
+          parseInt(g * 255),
+          parseInt(b * 255),
+        ];
         /// modded from https://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
         break;
 
       case (colour.includes("hsv")): /// HSV to RGB
         var cols;
         if (colour.includes("a")) {
-          cols = colour.substr(5).slice(0, -1).split(",").map(c => parseInt(c));
+          cols = colour.substr(5).slice(0, -1).split(",").map(c => parseFloat(c));
           this.alpha = cols.pop();
         } else {
-          cols = colour.substr(4).slice(0, -1).split(",").map(c => parseInt(c));
+          cols = colour.substr(4).slice(0, -1).split(",").map(c => parseFloat(c));
         }
         var h = cols[0] / 360;
         var s = cols[1] / 100;
@@ -98,7 +102,11 @@ class Prisma {
           b = hue2rgb(p, q, h - 1 / 3);
         }
 
-        this.rgb = [r * 255, g * 255, b * 255];
+        this.rgb = [
+          parseInt(r * 255),
+          parseInt(g * 255),
+          parseInt(b * 255),
+        ];
         /// modded from https://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
         break;
 
@@ -126,6 +134,7 @@ class Prisma {
     }
   }
 
+  // NOTE: What is this for?
   luma(colour) {
     this._convert(colour);
     var r = this.rgb[0] / 255;
@@ -137,12 +146,7 @@ class Prisma {
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
 
-  toRGB(colour) {
-    this._convert(colour);
-    return this.toHex(this.rgb);
-  }
-
-  toHSL(colour) {
+  #toHSL(colour) {
     this._convert(colour);
     var r = this.rgb[0] / 255;
     var g = this.rgb[1] / 255;
@@ -185,7 +189,7 @@ class Prisma {
     };
   }
 
-  toHSV(colour) {
+  #toHSV(colour) {
     this._convert(colour);
     var r = this.rgb[0] / 255;
     var g = this.rgb[1] / 255;
@@ -232,114 +236,123 @@ class Prisma {
     };
   }
 
-  toARGB(colour) {
-    this._convert(colour);
-    return this.toHex([this.alpha * 255].concat(this.rgb));
+  getRGB() {
+    return `rgb(${[...this.rgb].join(',')})`;
   }
 
-  toHex(colour) {
-    this._convert(colour);
+  getRGBA() {
+    return `rgba(${[...this.rgb, parseInt(this.alpha * 255)].join(',')})`;
+  }
+
+  getHex() {
     let self = this;
-    return "#".concat(this.rgb.map(function(c) {
+    let output = "#".concat(this.rgb.map(function(c) {
       c = self.clamp(Math.round(c), 255);
       return (c < 16 ? '0' : '') + c.toString(16);
     }).join(''));
+
+    if ( this.alpha < 1 ) {
+      let alpha = Math.round(this.alpha * 255);
+      output += (alpha < 16 ? '0' : '') + alpha.toString(16);
+    }
+
+    return output;
   }
 
-  hsla({h, s, l, a}) {
-    var sig = 2;
+  getHSL() {
+    let {h, s, l} = this.#toHSL(this.rgb);
+    let sig = 2;
+    return `hsl(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%)`;
+  }
+
+  getHSLA() {
+    let {h, s, l} = this.#toHSL(this.rgb);
+    let sig = 2;
+    return `hsla(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%, ${a})`;
+  }
+
+  getHSV() {
+    let {h, s, v} = this.#toHSV(this.rgb);
+    let sig = 2;
+    return `hsv(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${v.toFixed(sig)}%)`;
+  }
+
+  getHSVA() {
+    let {h, s, v} = this.#toHSL(this.rgb);
+    let sig = 2;
+    return `hsva(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${v.toFixed(sig)}%, ${a})`;
+  }
+
+  hslaToString({h, s, l, a}) {
+    let sig = 2;
     return `hsla(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%, ${a})`;
   }
 
   /// Operations.
 
-  spin(colour, amount) {
-    var hsl = this.toHSL(colour);
-    var hue = (hsl.h + amount) % 360;
+  spin(amount) {
+    let hsl = this.#toHSL(this.rgb);
+    let hue = (hsl.h + amount) % 360;
     hsl.h = hue < 0 ? 360 + hue : hue;
-    return this.hsla(hsl);
+    this._convert(this.hslaToString(hsl));
+    return this;
   }
 
-  fade(colour, amount) {
-    var hsl = this.toHSL(colour);
+  fade(amount) {
+    let hsl = this.#toHSL(this.rgb);
     hsl.a = amount / 100;
     hsl.a = this.clamp(hsl.a, 1);
-    return this.hsla(hsl);
+    this._convert(this.hslaToString(hsl));
+    return this;
   }
 
-  fadein(colour, amount, method) {
-    var hsl = this.toHSL(colour);
-
-    if (typeof method !== 'undefined' && method.value === 'relative') {
-      hsl.a += hsl.a * amount / 100;
-    } else {
-      hsl.a += amount / 100;
-    }
+  fadeIn(amount) {
+    let hsl = this.#toHSL(this.rgb);
+    hsl.a += amount / 100;
     hsl.a = this.clamp(hsl.a, 1);
-    return this.hsla(hsl);
+    this._convert(this.hslaToString(hsl));
+    return this;
   }
 
-  fadeout(colour, amount, method) {
-    var hsl = this.toHSL(colour);
-
-    if (typeof method !== 'undefined' && method.value === 'relative') {
-      hsl.a -= hsl.a * amount / 100;
-    } else {
-      hsl.a -= amount / 100;
-    }
+  fadeOut(amount) {
+    let hsl = this.#toHSL(this.rgb);
+    hsl.a -= amount / 100;
     hsl.a = this.clamp(hsl.a, 1);
-    return this.hsla(hsl);
+    this._convert(this.hslaToString(hsl));
+    return this;
   }
 
-  lighten(colour, amount, method) {
-    var hsl = this.toHSL(colour);
-
-    if (typeof method !== 'undefined' && method.value === 'relative') {
-      hsl.l += hsl.l * amount;
-    } else {
-      hsl.l += amount;
-    }
+  lighten(amount) {
+    let hsl = this.#toHSL(this.rgb);
+    hsl.l += amount;
     hsl.l = this.clamp(hsl.l, 100);
-    return this.hsla(hsl);
+    this._convert(this.hslaToString(hsl));
+    return this;
   }
 
-  darken(colour, amount, method) {
-    var hsl = this.toHSL(colour);
-
-    if (typeof method !== 'undefined' && method.value === 'relative') {
-      hsl.l -= hsl.l * amount;
-    } else {
-      hsl.l -= amount;
-    }
+  darken(amount) {
+    let hsl = this.#toHSL(this.rgb);
+    hsl.l -= amount;
     hsl.l = this.clamp(hsl.l, 100);
-    return this.hsla(hsl);
+    this._convert(this.hslaToString(hsl));
+    return this;
   }
 
-  saturate(colour, amount, method) {
-    var hsl = this.toHSL(colour);
-
-    if (typeof method !== 'undefined' && method.value === 'relative') {
-      hsl.s += hsl.s * amount;
-    } else {
-      hsl.s += amount;
-    }
-
+  saturate(amount) {
+    let hsl = this.#toHSL(this.rgb);
+    hsl.s += amount;
     hsl.s = this.clamp(hsl.s, 100);
-    return this.hsla(hsl);
+    this._convert(this.hslaToString(hsl));
+    return this;
   }
 
-  desaturate(colour, amount, method) {
-    var hsl = this.toHSL(colour);
-
-    if (typeof method !== 'undefined' && method.value === 'relative') {
-      hsl.s -= hsl.s * amount;
-    } else {
-      hsl.s -= amount;
-    }
-
+  desaturate(amount) {
+    let hsl = this.#toHSL(this.rgb);
+    hsl.s -= amount;
     hsl.s = this.clamp(hsl.s, 100);
-    return this.hsla(hsl);
+    this._convert(this.hslaToString(hsl));
+    return this;
   }
 }
 
-export default new Prisma();
+export default Prisma;
