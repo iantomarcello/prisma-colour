@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "Colour converter in JS.",
   "scripts": {
+    "start": "browser-sync start -s -f index.html prisma-colour.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ian Yong (iantomarcello)",
