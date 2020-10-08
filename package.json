@@ -4,9 +4,16 @@
   "description": "Colour converter in JS.",
   "scripts": {
     "start": "browser-sync start -s -f index.html prisma-colour.js",
+    "build": "npm run build:umd && npm run build:es6",
+    "build:umd": "rollup prisma-colour.js --file dist/umd/prisma-colour.js --format umd  --compact --name \"Prisma\"",
+    "build:es6": "rollup prisma-colour.js --file dist/es6/prisma-colour.js --format es --name \"Prisma\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ian Yong (iantomarcello)",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "rollup": "^2.29.0",
+    "rollup-plugin-terser": "^7.0.2"
+  }
 }
