@@ -72,45 +72,6 @@ class Prisma {
         /// modded from https://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
         break;
 
-      case (colour.includes("hsv")): /// HSV to RGB
-        var cols;
-        if (colour.includes("a")) {
-          cols = colour.substr(5).slice(0, -1).split(",").map(c => parseFloat(c));
-          this.alpha = cols.pop();
-        } else {
-          cols = colour.substr(4).slice(0, -1).split(",").map(c => parseFloat(c));
-        }
-        var h = cols[0] / 360;
-        var s = cols[1] / 100;
-        var l = cols[2] / 100;
-        var r, g, b;
-        if (s == 0) {
-          r = g = b = l; // achromatic
-        } else {
-          function hue2rgb(p, q, t) {
-            if (t < 0) t += 1;
-            if (t > 1) t -= 1;
-            if (t < 1 / 6) return p + (q - p) * 6 * t;
-            if (t < 1 / 2) return q;
-            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-            return p;
-          }
-
-          var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-          var p = 2 * l - q;
-          r = hue2rgb(p, q, h + 1 / 3);
-          g = hue2rgb(p, q, h);
-          b = hue2rgb(p, q, h - 1 / 3);
-        }
-
-        this.rgb = [
-          parseInt(r * 255),
-          parseInt(g * 255),
-          parseInt(b * 255),
-        ];
-        /// modded from https://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
-        break;
-
       case (colour.includes("rgb")): /// RGB breakdown
         if (colour.includes("a")) {
           let cols = colour.substr(5).slice(0, -1).split(",").map(c => parseFloat(c));
@@ -121,7 +82,7 @@ class Prisma {
         }
         break;
 
-      case (Array.isArray(colour)): /// HSV to RGB
+      case (Array.isArray(colour)):
         if ( colour.length === 3 ) {
           this.rgb = [...colour];
         } else if ( colour.length === 4 ) {
@@ -190,53 +151,6 @@ class Prisma {
     };
   }
 
-  #toHSV(colour) {
-    this._convert(colour);
-    var r = this.rgb[0] / 255;
-    var g = this.rgb[1] / 255;
-    var b = this.rgb[2] / 255;
-    var a = this.alpha;
-    var max = Math.max(r, g, b);
-    var min = Math.min(r, g, b);
-    var h;
-    var s;
-    var v = max;
-    var d = max - min;
-
-    if (max === 0) {
-      s = 0;
-    } else {
-      s = d / max;
-    }
-
-    if (max === min) {
-      h = 0;
-    } else {
-      switch (max) {
-        case r:
-          h = (g - b) / d + (g < b ? 6 : 0);
-          break;
-
-        case g:
-          h = (b - r) / d + 2;
-          break;
-
-        case b:
-          h = (r - g) / d + 4;
-          break;
-      }
-
-      h /= 6;
-    }
-
-    return {
-      h: h * 360,
-      s: s,
-      v: v,
-      a: a
-    };
-  }
-
   getRGB() {
     return `rgb(${[...this.rgb].join(',')})`;
   }
@@ -270,18 +184,6 @@ class Prisma {
     let {h, s, l, a} = this.#toHSL(this.rgb);
     let sig = 2;
     return `hsla(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%, ${a})`;
-  }
-
-  getHSV() {
-    let {h, s, v} = this.#toHSV(this.rgb);
-    let sig = 2;
-    return `hsv(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${v.toFixed(sig)}%)`;
-  }
-
-  getHSVA() {
-    let {h, s, v} = this.#toHSL(this.rgb);
-    let sig = 2;
-    return `hsva(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${v.toFixed(sig)}%, ${a})`;
   }
 
   hslaToString({h, s, l, a}) {
