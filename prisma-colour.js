@@ -3,11 +3,11 @@ class Prisma {
     this.raw = raw;
     this.rgb = new Array;
     this.alpha = 1;
-    this._convert(this.raw);
+    this.#convert(this.raw);
   }
 
   reset() {
-    this._convert(this.raw);
+    this.#convert(this.raw);
   }
 
   clamp(v, max) {
@@ -15,7 +15,7 @@ class Prisma {
   }
 
   /// Conversion.
-  _convert(colour) {
+  #convert(colour) {
     switch (true) {
       case (colour.includes("#")): /// Hex to RGB
         let segment;
@@ -98,7 +98,7 @@ class Prisma {
 
   // NOTE: What is this for?
   luma(colour) {
-    this._convert(colour);
+    this.#convert(colour);
     var r = this.rgb[0] / 255;
     var g = this.rgb[1] / 255;
     var b = this.rgb[2] / 255;
@@ -109,7 +109,7 @@ class Prisma {
   }
 
   #toHSL(colour) {
-    this._convert(colour);
+    this.#convert(colour);
     var r = this.rgb[0] / 255;
     var g = this.rgb[1] / 255;
     var b = this.rgb[2] / 255;
@@ -181,14 +181,11 @@ class Prisma {
   }
 
   getHSLA() {
-    let {h, s, l, a} = this.#toHSL(this.rgb);
-    let sig = 2;
-    return `hsla(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%, ${a})`;
+    return this.#hslaToString(this.#toHSL(this.rgb))
   }
 
-  hslaToString({h, s, l, a}) {
-    let sig = 2;
-    return `hsla(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%, ${a})`;
+  #hslaToString({h, s, l, a}, sig = 2) {
+    return `hsla(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%, ${a.toFixed(sig)})`;
   }
 
   /// Operations.
@@ -197,7 +194,7 @@ class Prisma {
     let hsl = this.#toHSL(this.rgb);
     let hue = (hsl.h + parseFloat(amount)) % 360;
     hsl.h = hue < 0 ? 360 + hue : hue;
-    this._convert(this.hslaToString(hsl));
+    this.#convert(this.#hslaToString(hsl));
     return this;
   }
 
@@ -205,7 +202,7 @@ class Prisma {
     let hsl = this.#toHSL(this.rgb);
     hsl.a = 1 - parseFloat(amount) / 100;
     hsl.a = this.clamp(hsl.a, 1);
-    this._convert(this.hslaToString(hsl));
+    this.#convert(this.#hslaToString(hsl));
     return this;
   }
 
@@ -213,7 +210,7 @@ class Prisma {
     let hsl = this.#toHSL(this.rgb);
     hsl.a += parseFloat(amount) / 100;
     hsl.a = this.clamp(hsl.a, 1);
-    this._convert(this.hslaToString(hsl));
+    this.#convert(this.#hslaToString(hsl));
     return this;
   }
 
@@ -221,7 +218,7 @@ class Prisma {
     let hsl = this.#toHSL(this.rgb);
     hsl.a -= parseFloat(amount) / 100;
     hsl.a = this.clamp(hsl.a, 1);
-    this._convert(this.hslaToString(hsl));
+    this.#convert(this.#hslaToString(hsl));
     return this;
   }
 
@@ -229,7 +226,7 @@ class Prisma {
     let hsl = this.#toHSL(this.rgb);
     hsl.l += parseFloat(amount);
     hsl.l = this.clamp(hsl.l, 100);
-    this._convert(this.hslaToString(hsl));
+    this.#convert(this.#hslaToString(hsl));
     return this;
   }
 
@@ -237,7 +234,7 @@ class Prisma {
     let hsl = this.#toHSL(this.rgb);
     hsl.l -= parseFloat(amount);
     hsl.l = this.clamp(hsl.l, 100);
-    this._convert(this.hslaToString(hsl));
+    this.#convert(this.#hslaToString(hsl));
     return this;
   }
 
@@ -245,7 +242,7 @@ class Prisma {
     let hsl = this.#toHSL(this.rgb);
     hsl.s += parseFloat(amount);
     hsl.s = this.clamp(hsl.s, 100);
-    this._convert(this.hslaToString(hsl));
+    this.#convert(this.#hslaToString(hsl));
     return this;
   }
 
@@ -253,7 +250,7 @@ class Prisma {
     let hsl = this.#toHSL(this.rgb);
     hsl.s -= parseFloat(amount);
     hsl.s = this.clamp(hsl.s, 100);
-    this._convert(this.hslaToString(hsl));
+    this.#convert(this.#hslaToString(hsl));
     return this;
   }
 }
