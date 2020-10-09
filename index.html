@@ -347,7 +347,6 @@
         let output = document.getElementById('chaining-item-' + (index + 1));
 
         let colour = new Prisma(inputColour)[method](amount).getHex();
-        console.log(amount);
 
         output.querySelector('.box-colour').style.backgroundColor = colour;
         output.querySelector('.box-title').textContent = colour;
