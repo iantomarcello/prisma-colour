@@ -1,1 +1,287 @@
-export default class{constructor(t){this.raw=t,this.rgb=new Array,this.alpha=1,this.convert(this.raw)}reset(){this.convert(this.raw)}clamp(t,s){return Math.min(Math.max(t,0),s)}convert(t){switch(!0){case t.includes("#"):let g;t.length>7?(g=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(t),this.alpha=parseInt(g[4],16)/255):(g=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(t),this.alpha=1),this.rgb[0]=parseInt(g[1],16),this.rgb[1]=parseInt(g[2],16),this.rgb[2]=parseInt(g[3],16);break;case t.includes("hsl"):t.includes("a")?(p=t.substr(5).slice(0,-1).split(",").map((t=>parseFloat(t))),this.alpha=p.pop()):p=t.substr(4).slice(0,-1).split(",").map((t=>parseFloat(t)));var s,r,a,i=p[0]/360,h=p[1]/100,e=p[2]/100;if(0==h)s=r=a=e;else{function l(t,s,r){return r<0&&(r+=1),r>1&&(r-=1),r<1/6?t+6*(s-t)*r:r<.5?s:r<2/3?t+(s-t)*(2/3-r)*6:t}var n=e<.5?e*(1+h):e+h-e*h,o=2*e-n;s=l(o,n,i+1/3),r=l(o,n,i),a=l(o,n,i-1/3)}this.rgb=[parseInt(255*s),parseInt(255*r),parseInt(255*a)];break;case t.includes("rgb"):if(t.includes("a")){let s=t.substr(5).slice(0,-1).split(",").map((t=>parseFloat(t)));this.alpha=s.pop(),this.rgb=s}else this.rgb=t.substr(4).slice(0,-1).split(",").map((t=>parseFloat(t)));break;case Array.isArray(t):if(3===t.length)this.rgb=[...t];else if(4===t.length){var p=[...t];this.alpha=p.pop(),this.rgb=[...p]}break;default:throw Error("Param doesn't seem to be a colour.")}}luma(t){this.convert(t);var s=this.rgb[0]/255,r=this.rgb[1]/255,a=this.rgb[2]/255;return.2126*(s=s<=.03928?s/12.92:Math.pow((s+.055)/1.055,2.4))+.7152*(r=r<=.03928?r/12.92:Math.pow((r+.055)/1.055,2.4))+.0722*(a=a<=.03928?a/12.92:Math.pow((a+.055)/1.055,2.4))}toHSL(t){this.convert(t);var s,r,a=this.rgb[0]/255,i=this.rgb[1]/255,h=this.rgb[2]/255,e=this.alpha,l=Math.max(a,i,h),n=Math.min(a,i,h),o=(l+n)/2,p=l-n;if(l===n)s=r=0;else{switch(r=o>.5?p/(2-l-n):p/(l+n),l){case a:s=(i-h)/p+(i<h?6:0);break;case i:s=(h-a)/p+2;break;case h:s=(a-i)/p+4}s/=6}return{h:360*s,s:100*r,l:100*o,a:e}}getRGB(){return`rgb(${[...this.rgb].join(",")})`}getRGBA(){return`rgba(${[...this.rgb,this.alpha].join(",")})`}getHex(){let t=this,s="#".concat(this.rgb.map((function(s){return((s=t.clamp(Math.round(s),255))<16?"0":"")+s.toString(16)})).join(""));if(this.alpha<1){let t=Math.round(255*this.alpha);s+=(t<16?"0":"")+t.toString(16)}return s}getHSL(){let{h:t,s:s,l:r}=this.toHSL(this.rgb);return`hsl(${t.toFixed(2)}, ${s.toFixed(2)}%, ${r.toFixed(2)}%)`}getHSLA(){return this.hslaToString(this.toHSL(this.rgb))}hslaToString({h:t,s:s,l:r,a:a},i=2){return`hsla(${t.toFixed(i)}, ${s.toFixed(i)}%, ${r.toFixed(i)}%, ${a.toFixed(i)})`}spin(t=0){let s=this.toHSL(this.rgb),r=(s.h+parseFloat(t))%360;return s.h=r<0?360+r:r,this.convert(this.hslaToString(s)),this}fade(t=this.alpha){let s=this.toHSL(this.rgb);return s.a=1-parseFloat(t)/100,s.a=this.clamp(s.a,1),this.convert(this.hslaToString(s)),this}fadeIn(t=0){let s=this.toHSL(this.rgb);return s.a+=parseFloat(t)/100,s.a=this.clamp(s.a,1),this.convert(this.hslaToString(s)),this}fadeOut(t=0){let s=this.toHSL(this.rgb);return s.a-=parseFloat(t)/100,s.a=this.clamp(s.a,1),this.convert(this.hslaToString(s)),this}lighten(t=0){let s=this.toHSL(this.rgb);return s.l+=parseFloat(t),s.l=this.clamp(s.l,100),this.convert(this.hslaToString(s)),this}darken(t=0){let s=this.toHSL(this.rgb);return s.l-=parseFloat(t),s.l=this.clamp(s.l,100),this.convert(this.hslaToString(s)),this}saturate(t=0){let s=this.toHSL(this.rgb);return s.s+=parseFloat(t),s.s=this.clamp(s.s,100),this.convert(this.hslaToString(s)),this}desaturate(t=0){let s=this.toHSL(this.rgb);return s.s-=parseFloat(t),s.s=this.clamp(s.s,100),this.convert(this.hslaToString(s)),this}}
+class Prisma {
+  constructor(raw) {
+    if ( typeof raw !== 'string' ) {
+      return console.error('Prisma Error: Value passed in constructor must be a string of CSS colour value.');
+    }
+    this.raw = raw;
+    this.rgb = new Array;
+    this.alpha = 1;
+    this.convert(this.raw);
+  }
+
+  get r() {
+    return this.rgb[0];
+  }
+
+  get g() {
+    return this.rgb[1];
+  }
+
+  get b() {
+    return this.rgb[2];
+  }
+
+  get a() {
+    return this.alpha;
+  }
+
+  setRGBA(r, g, b, a) {
+    this.rgb = [r, g, b];
+    this.alpha = a;
+    return this;
+  }
+
+  reset() {
+    this.convert(this.raw);
+  }
+
+  clone() {
+    return new this.constructor(this.raw).setRGBA(...this.rgb, this.alpha);
+  }
+
+  clamp(v, max) {
+    return Math.min(Math.max(v, 0), max);
+  }
+
+  /// Conversion.
+  convert(colour) {
+    switch (true) {
+      case (colour.includes("#")): /// Hex to RGB
+        let segment;
+        if (colour.length > 7) {
+          segment = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(colour);
+          this.alpha = parseInt(segment[4], 16) / 255;
+        } else {
+          segment = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(colour);
+          this.alpha = 1;
+        }
+        this.rgb[0] = parseInt(segment[1], 16);
+        this.rgb[1] = parseInt(segment[2], 16);
+        this.rgb[2] = parseInt(segment[3], 16);
+        // modded from Tim Down on https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+        break;
+
+      case (colour.includes("hsl")): /// HSL to RGB
+        var cols;
+        if (colour.includes("a")) {
+          cols = colour.substr(5).slice(0, -1).split(",").map(c => parseFloat(c));
+          this.alpha = cols.pop();
+        } else {
+          cols = colour.substr(4).slice(0, -1).split(",").map(c => parseFloat(c));
+        }
+        var h = cols[0] / 360;
+        var s = cols[1] / 100;
+        var l = cols[2] / 100;
+        // console.log(cols);
+        var r, g, b;
+        if (s == 0) {
+          r = g = b = l; // achromatic
+        } else {
+          function hue2rgb(p, q, t) {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1 / 6) return p + (q - p) * 6 * t;
+            if (t < 1 / 2) return q;
+            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+            return p;
+          }
+
+          var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+          var p = 2 * l - q;
+          r = hue2rgb(p, q, h + 1 / 3);
+          g = hue2rgb(p, q, h);
+          b = hue2rgb(p, q, h - 1 / 3);
+        }
+
+        this.rgb = [
+          parseInt(r * 255),
+          parseInt(g * 255),
+          parseInt(b * 255),
+        ];
+        /// modded from https://axonflux.com/handy-rgb-to-hsl-and-rgb-to-hsv-color-model-c
+        break;
+
+      case (colour.includes("rgb")): /// RGB breakdown
+        if (colour.includes("a")) {
+          let cols = colour.substr(5).slice(0, -1).split(",").map(c => parseFloat(c));
+          this.alpha = cols.pop();
+          this.rgb = cols;
+        } else {
+          this.rgb = colour.substr(4).slice(0, -1).split(",").map(c => parseFloat(c));
+        }
+        break;
+
+      case (Array.isArray(colour)):
+        if ( colour.length === 3 ) {
+          this.rgb = [...colour];
+        } else if ( colour.length === 4 ) {
+          var cols = [...colour];
+          this.alpha = cols.pop();
+          this.rgb = [...cols];
+        }
+        break;
+      default:
+        throw Error("Param doesn't seem to be a colour.");
+    }
+  }
+
+  // NOTE: What is this for?
+  luma(colour) {
+    this.convert(colour);
+    var r = this.rgb[0] / 255;
+    var g = this.rgb[1] / 255;
+    var b = this.rgb[2] / 255;
+    r = r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
+    g = g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
+    b = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+
+  toHSL(colour) {
+    this.convert(colour);
+    var r = this.rgb[0] / 255;
+    var g = this.rgb[1] / 255;
+    var b = this.rgb[2] / 255;
+    var a = this.alpha;
+    var max = Math.max(r, g, b);
+    var min = Math.min(r, g, b);
+    var h;
+    var s;
+    var l = (max + min) / 2;
+    var d = max - min;
+
+    if (max === min) {
+      h = s = 0;
+    } else {
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+      switch (max) {
+        case r:
+          h = (g - b) / d + (g < b ? 6 : 0);
+          break;
+
+        case g:
+          h = (b - r) / d + 2;
+          break;
+
+        case b:
+          h = (r - g) / d + 4;
+          break;
+      }
+
+      h /= 6;
+    }
+
+    return {
+      h: h * 360,
+      s: s * 100,
+      l: l * 100,
+      a: a
+    };
+  }
+
+  getRGB() {
+    return `rgb(${[...this.rgb].join(',')})`;
+  }
+
+  getRGBA() {
+    return `rgba(${[...this.rgb, this.alpha].join(',')})`;
+  }
+
+  getHex() {
+    let self = this;
+    let output = "#".concat(this.rgb.map(function(c) {
+      c = self.clamp(Math.round(c), 255);
+      return (c < 16 ? '0' : '') + c.toString(16);
+    }).join(''));
+
+    if ( this.alpha < 1 ) {
+      let alpha = Math.round(this.alpha * 255);
+      output += (alpha < 16 ? '0' : '') + alpha.toString(16);
+    }
+
+    return output;
+  }
+
+  getHSL() {
+    let {h, s, l} = this.toHSL(this.rgb);
+    let sig = 2;
+    return `hsl(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%)`;
+  }
+
+  getHSLA() {
+    return this.hslaToString(this.toHSL(this.rgb))
+  }
+
+  hslaToString({h, s, l, a}, sig = 2) {
+    return `hsla(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%, ${a.toFixed(sig)})`;
+  }
+
+  /// Operations.
+
+  spin(amount = 0) {
+    let hsl = this.toHSL(this.rgb);
+    let hue = (hsl.h + parseFloat(amount)) % 360;
+    hsl.h = hue < 0 ? 360 + hue : hue;
+    this.convert(this.hslaToString(hsl));
+    return this;
+  }
+
+  fade(amount = this.alpha) {
+    let hsl = this.toHSL(this.rgb);
+    hsl.a = 1 - parseFloat(amount) / 100;
+    hsl.a = this.clamp(hsl.a, 1);
+    this.convert(this.hslaToString(hsl));
+    return this;
+  }
+
+  fadeIn(amount = 0) {
+    let hsl = this.toHSL(this.rgb);
+    hsl.a += parseFloat(amount) / 100;
+    hsl.a = this.clamp(hsl.a, 1);
+    this.convert(this.hslaToString(hsl));
+    return this;
+  }
+
+  fadeOut(amount = 0) {
+    let hsl = this.toHSL(this.rgb);
+    hsl.a -= parseFloat(amount) / 100;
+    hsl.a = this.clamp(hsl.a, 1);
+    this.convert(this.hslaToString(hsl));
+    return this;
+  }
+
+  lighten(amount = 0) {
+    let hsl = this.toHSL(this.rgb);
+    hsl.l += parseFloat(amount);
+    hsl.l = this.clamp(hsl.l, 100);
+    this.convert(this.hslaToString(hsl));
+    return this;
+  }
+
+  darken(amount = 0) {
+    let hsl = this.toHSL(this.rgb);
+    hsl.l -= parseFloat(amount);
+    hsl.l = this.clamp(hsl.l, 100);
+    this.convert(this.hslaToString(hsl));
+    return this;
+  }
+
+  saturate(amount = 0) {
+    let hsl = this.toHSL(this.rgb);
+    hsl.s += parseFloat(amount);
+    hsl.s = this.clamp(hsl.s, 100);
+    this.convert(this.hslaToString(hsl));
+    return this;
+  }
+
+  desaturate(amount = 0) {
+    let hsl = this.toHSL(this.rgb);
+    hsl.s -= parseFloat(amount);
+    hsl.s = this.clamp(hsl.s, 100);
+    this.convert(this.hslaToString(hsl));
+    return this;
+  }
+}
+
+export default Prisma;

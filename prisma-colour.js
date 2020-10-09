@@ -1,13 +1,42 @@
 class Prisma {
   constructor(raw) {
+    if ( typeof raw !== 'string' ) {
+      return console.error('Prisma Error: Value passed in constructor must be a string of CSS colour value.');
+    }
     this.raw = raw;
     this.rgb = new Array;
     this.alpha = 1;
     this.convert(this.raw);
   }
 
+  get r() {
+    return this.rgb[0];
+  }
+
+  get g() {
+    return this.rgb[1];
+  }
+
+  get b() {
+    return this.rgb[2];
+  }
+
+  get a() {
+    return this.alpha;
+  }
+
+  setRGBA(r, g, b, a) {
+    this.rgb = [r, g, b];
+    this.alpha = a;
+    return this;
+  }
+
   reset() {
     this.convert(this.raw);
+  }
+
+  clone() {
+    return new this.constructor(this.raw).setRGBA(...this.rgb, this.alpha);
   }
 
   clamp(v, max) {
