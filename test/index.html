@@ -312,7 +312,7 @@
     </main>
 
     <script type="module">
-      import Prisma from './prisma-colour.js';
+      import Prisma from '../prisma-colour.js';
 
       /** Demo **/
 
@@ -330,7 +330,7 @@
           let colour = new Prisma(baseColour)[method](amount)['get' + format]();
           clone.querySelector('.box-colour').style.backgroundColor = colour;
           clone.querySelector('.box-title').textContent = `${method} by ${amount}`;
-          clone.querySelector('.box-value').textContent = new Prisma(colour).getHex();
+          clone.querySelector('.box-value').textContent = colour;
           column.appendChild(clone);
         });
       });
