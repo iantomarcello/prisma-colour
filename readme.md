@@ -45,51 +45,51 @@ let changeIt = new Prisma(inputColour);
 ## Operation Methods
 Operations are chainable methods which converts the colour. Chainable meaning it always returns it self. To output the colours, see _Output Methods_ below.
 
-##### .fade(amount: Number)
+#### .fade(amount: Number)
 Sets colour's opacity to said amount regardless of input's opacity.
 
-##### .fadeIn(amount: Number)
+#### .fadeIn(amount: Number)
 Increases colour's opacity by said amount.
 
-##### .fadeOut(amount: Number)
+#### .fadeOut(amount: Number)
 Decreases colour's opacity by said amount.
 
-##### .spin(amount: Number)
+#### .spin(amount: Number)
 Rotate the hue angle of a colour by amount in degrees.
 
-##### .lighten(amount: Number)
+#### .lighten(amount: Number)
 Increases colour's lightness in the HSL colour space by said amount.
 
-##### .darken(amount: Number)
+#### .darken(amount: Number)
 Decreases colour's lightness in the HSL colour space by said amount.
 
-##### .saturate(amount: Number)
+#### .saturate(amount: Number)
 Increases colour's saturation in the HSL colour space by said amount.
 
-##### .desaturate(amount: Number)
+#### .desaturate(amount: Number)
 Decreases colour's saturation in the HSL colour space by said amount.
 
 ## Output Methods
 Output methods are end of the chain methods that returns the colour is CSS values of preferred format.
 
-##### .getHex() : String
+#### .getHex() : String
 Returns colour in Hex representation.<br>
 If the colour had alpha, it will output the transparency as well.
 
-##### .getRGB() : String
+#### .getRGB() : String
 Returns colour in RGB, regardless of transparency. <br>
 
-##### .getRGBA() : String
+#### .getRGBA() : String
 Returns colour in RGBA, inclusive of transparency. <br>
 
-##### .getHSL() : String
+#### .getHSL() : String
 Returns colour in HSL, regardless of transparency. <br>
 
-##### .getHSLA() : String
+#### .getHSLA() : String
 Returns colour in HSLA, inclusive of transparency. <br>
 
 ## Other Method
-##### .clone() : Object
+#### .clone() : Object
 Returns a copy of this Prisma instance including operated colour. <br>
 
 ---
@@ -176,8 +176,6 @@ class HoverMeButton extends LitElement {
 customElements.define('hover-me-button', HoverMeButton);
 
 ```
-
----
 
 ### Note
 This is a colour converter and has nothing to do with the database toolkit, [Prisma](https://github.com/prisma/prisma).
