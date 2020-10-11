@@ -20,7 +20,7 @@ I find the nesting methods of like the preprocessors are bulky. <br>
 Say, I wanna lighten something, then saturate it, then fade it a little, for the the preprocessors, it would look like this:
 ``` JS
 // If it looked like CSS preprocessors.
-const bulky = OtherLibrary.fade(saturate(lighten('#ff0000', 15) 15) 15); // #ff4b4bd9
+const bulky = SomeOtherLibraryMaybe.fade(saturate(lighten('#ff0000', 15) 15) 15); // #ff4b4bd9
 ```
 Making it chainable would make it more readible.
 ``` JS
@@ -70,27 +70,29 @@ Increases colour's saturation in the HSL colour space by said amount.
 Decreases colour's saturation in the HSL colour space by said amount.
 
 ## Output Methods
-Output methods are end of the chain methods that returns the colour is CSS values of preferred format.
+Output methods are end of the chain methods that returns the colour is CSS values of preferred format. <br>
+RGB and HSL methods have [newer space separated notation variant](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#RGB_colors), which be be outputted by setting the `spacing` param to `space`. By default it outputs the good old `comma`.
 
 #### .getHex() : String
 Returns colour in Hex representation.<br>
 If the colour had alpha, it will output the transparency as well.
 
-#### .getRGB() : String
+#### .getRGB(spacing : String) : String
 Returns colour in RGB, regardless of transparency. <br>
 
-#### .getRGBA() : String
+#### .getRGBA(spacing : String) : String
 Returns colour in RGBA, inclusive of transparency. <br>
 
-#### .getHSL() : String
+#### .getHSL(spacing : String) : String
 Returns colour in HSL, regardless of transparency. <br>
 
-#### .getHSLA() : String
+#### .getHSLA(spacing : String) : String
 Returns colour in HSLA, inclusive of transparency. <br>
 
 ## Other Method
 #### .clone() : Object
 Returns a copy of this Prisma instance including operated colour. <br>
+You can clone at anytime during operation.
 
 ---
 

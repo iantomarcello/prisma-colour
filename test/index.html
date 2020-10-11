@@ -346,7 +346,7 @@
         let amount = document.getElementById('chain-interactive-' + (index + 1) +'-amount').value;
         let output = document.getElementById('chaining-item-' + (index + 1));
 
-        let colour = new Prisma(inputColour)[method](amount).getHex();
+        let colour = new Prisma(inputColour)[method](amount).getRGBA('space');
 
         output.querySelector('.box-colour').style.backgroundColor = colour;
         output.querySelector('.box-title').textContent = colour;

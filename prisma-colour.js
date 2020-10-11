@@ -1,7 +1,7 @@
 class Prisma {
   constructor(raw) {
     if ( typeof raw !== 'string' ) {
-      return console.error('Prisma Error: Value passed in constructor must be a string of CSS colour value.');
+      throw Error('Prisma Error: Value passed in constructor must be a string of CSS colour value.');
     }
     this.raw = raw;
     this.rgb = new Array;
@@ -43,6 +43,21 @@ class Prisma {
     return Math.min(Math.max(v, 0), max);
   }
 
+  /**
+   *  Split CSS colour values by comma or space.
+   */
+  _splitBetter(string) {
+    string = string.trim().replaceAll(', ', ',');
+    if ( string.includes(',') ) {
+      return string.split(',');
+    } else if ( string.includes(' ') ) {
+      return string.split(' ');
+    } else {
+      throw Error('Param doesn\'t seem to be a colour.');
+      return '';
+    }
+  }
+
   /// Conversion.
   convert(colour) {
     switch (true) {
@@ -64,10 +79,10 @@ class Prisma {
       case (colour.includes("hsl")): /// HSL to RGB
         var cols;
         if (colour.includes("a")) {
-          cols = colour.substr(5).slice(0, -1).split(",").map(c => parseFloat(c));
+          cols = this._splitBetter(colour.substr(5).slice(0, -1)).map(c => parseFloat(c));
           this.alpha = cols.pop();
         } else {
-          cols = colour.substr(4).slice(0, -1).split(",").map(c => parseFloat(c));
+          cols = this._splitBetter(colour.substr(4).slice(0, -1)).map(c => parseFloat(c));
         }
         var h = cols[0] / 360;
         var s = cols[1] / 100;
@@ -103,11 +118,11 @@ class Prisma {
 
       case (colour.includes("rgb")): /// RGB breakdown
         if (colour.includes("a")) {
-          let cols = colour.substr(5).slice(0, -1).split(",").map(c => parseFloat(c));
+          cols = this._splitBetter(colour.substr(5).slice(0, -1)).map(c => parseFloat(c));
           this.alpha = cols.pop();
           this.rgb = cols;
         } else {
-          this.rgb = colour.substr(4).slice(0, -1).split(",").map(c => parseFloat(c));
+          this.rgb = this._splitBetter(colour.substr(4).slice(0, -1)).map(c => parseFloat(c));
         }
         break;
 
@@ -180,12 +195,28 @@ class Prisma {
     };
   }
 
-  getRGB() {
-    return `rgb(${[...this.rgb].join(',')})`;
+  getRGB(spacing = 'comma') {
+    switch (spacing) {
+      case 'space':
+        return `rgb(${[...this.rgb].join(' ')})`;
+        break;
+
+      case 'comma':
+      default:
+        return `rgb(${[...this.rgb].join(', ')})`;
+    }
   }
 
-  getRGBA() {
-    return `rgba(${[...this.rgb, this.alpha].join(',')})`;
+  getRGBA(spacing = 'comma') {
+    switch (spacing) {
+      case 'space':
+        return `rgba(${[...this.rgb].join(' ')}  / ${this.alpha})`;
+        break;
+
+      case 'comma':
+      default:
+        return `rgba(${[...this.rgb, this.alpha].join(', ')})`;
+    }
   }
 
   getHex() {
@@ -203,14 +234,32 @@ class Prisma {
     return output;
   }
 
-  getHSL() {
+  getHSL(spacing = 'comma') {
     let {h, s, l} = this.toHSL(this.rgb);
     let sig = 2;
-    return `hsl(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%)`;
+    switch (spacing) {
+      case 'space':
+        return `hsl(${h.toFixed(sig)} ${s.toFixed(sig)}% ${l.toFixed(sig)}%)`;
+        break;
+
+      case 'comma':
+      default:
+        return `hsl(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%)`;
+    }
   }
 
-  getHSLA() {
-    return this.hslaToString(this.toHSL(this.rgb))
+  getHSLA(spacing = 'comma') {
+    let {h, s, l} = this.toHSL(this.rgb);
+    let sig = 2;
+    switch (spacing) {
+      case 'space':
+        return `hsla(${h.toFixed(sig)} ${s.toFixed(sig)}% ${l.toFixed(sig)}% / ${this.a.toFixed(sig)})`;
+        break;
+
+      case 'comma':
+      default:
+        return `hsla(${h.toFixed(sig)}, ${s.toFixed(sig)}%, ${l.toFixed(sig)}%, ${this.a.toFixed(sig)})`;
+    }
   }
 
   hslaToString({h, s, l, a}, sig = 2) {
