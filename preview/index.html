@@ -312,7 +312,7 @@
     </main>
 
     <script type="module">
-      import Prisma from '../prisma-colour.js';
+      import PrismaColor from '../build/esm/prisma-colour.js';
 
       /** Demo **/
 
@@ -327,7 +327,7 @@
 
         methods.forEach(method => {
           let clone = template.content.cloneNode(true);
-          let colour = new Prisma(baseColour)[method](amount)['get' + format]();
+          let colour = new PrismaColor(baseColour)[method](amount)['get' + format]();
           clone.querySelector('.box-colour').style.backgroundColor = colour;
           clone.querySelector('.box-title').textContent = `${method} by ${amount}`;
           clone.querySelector('.box-value').textContent = colour;
@@ -346,7 +346,7 @@
         let amount = document.getElementById('chain-interactive-' + (index + 1) +'-amount').value;
         let output = document.getElementById('chaining-item-' + (index + 1));
 
-        let colour = new Prisma(inputColour)[method](amount).getRGBA('space');
+        let colour = new PrismaColor(inputColour)[method](amount).getRGBA('space');
 
         output.querySelector('.box-colour').style.backgroundColor = colour;
         output.querySelector('.box-title').textContent = colour;

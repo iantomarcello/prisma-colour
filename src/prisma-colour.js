@@ -1,4 +1,4 @@
-class Prisma {
+class PrismaColor {
   constructor(raw) {
     if ( typeof raw !== 'string' ) {
       throw Error('Prisma Error: Value passed in constructor must be a string of CSS colour value.');
@@ -333,4 +333,4 @@ class Prisma {
   }
 }
 
-export default Prisma;
+export default PrismaColor;

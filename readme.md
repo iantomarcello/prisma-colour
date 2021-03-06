@@ -1,14 +1,14 @@
-# Prima Colour
+# Prisma Colour
 Prisma, which means prism in Malay, is a simple chainable colour converter in JS that outputs CSS colour values like the lovely hex colours and rgb.
 
 Here's how it works:
 ``` JS
-import Prisma from './prisma-colour.js';
+import PrismaColour from '@iantomarcello/prisma-colour';
 const red = '#ff0000';
-const pink = new Prisma(red).lighten(40).getHex(); // #fecccc
-const transparentRed = new Prisma(red).fadeOut(75).getHex(); // #ff000040.
-const darkOrange = new Prisma(red).spin(40).darken(15).getHex(); // #b27600.
-const fullCircle = new Prisma(red).spin(180).spin(180).getHex(); // #ff0000
+const pink = new PrismaColour(red).lighten(40).getHex(); // #fecccc
+const transparentRed = new PrismaColour(red).fadeOut(75).getHex(); // #ff000040.
+const darkOrange = new PrismaColour(red).spin(40).darken(15).getHex(); // #b27600.
+const fullCircle = new PrismaColour(red).spin(180).spin(180).getHex(); // #ff0000
 ```
 
 *Well this looks familliar...* <br>
@@ -16,7 +16,7 @@ Yup, its kinda similar to how colour function of css preprocessors like [LESS](h
 code is based on that.
 
 *Why chainable tho...?* <br>
-I find the nesting methods of like the preprocessors are bulky. <br>
+I find the nesting methods of like the preprocessors to be bulky. <br>
 Say, I wanna lighten something, then saturate it, then fade it a little, for the the preprocessors, it would look like this:
 ``` JS
 // If it looked like CSS preprocessors.
@@ -25,82 +25,89 @@ const bulky = SomeOtherLibraryMaybe.fade(saturate(lighten('#ff0000', 15) 15) 15)
 Making it chainable would make it more readible.
 ``` JS
 // 🔗🔗🔗
-const chaining = new Prisma('#ff0000')
+const chaining = new PrismaColour('#ff0000')
   .lighten(15) // #fe4c4c
   .saturate(15) //#ff4b4b
   .fade(15).getHex(); //#ff4b4bd9
 ```
 
 ---
+<br>
 
 ## Getting Started
 Like a prism, to get output colour, you must provide an input colour.
 ``` JS
-import Prisma from './prisma-colour.js';
+import PrismaColour from '@iantomarcello/prisma-colour';
 const inputColour = '#ff0000';
-let changeIt = new Prisma(inputColour);
+let changeIt = new PrismaColour(inputColour);
 // inputColour is ready to be converted.
 ```
+<br>
 
 ## Operation Methods
 Operations are chainable methods which converts the colour. Chainable meaning it always returns it self. To output the colours, see _Output Methods_ below.
 
-#### .fade(amount: Number)
+### **.fade**( amount: Number )
 Sets colour's opacity to said amount regardless of input's opacity.
 
-#### .fadeIn(amount: Number)
+### **.fadeIn**( amount: Number )
 Increases colour's opacity by said amount.
 
-#### .fadeOut(amount: Number)
+### **.fadeOut**( amount: Number )
 Decreases colour's opacity by said amount.
 
-#### .spin(amount: Number)
+### **.spin**( amount: Number )
 Rotate the hue angle of a colour by amount in degrees.
 
-#### .lighten(amount: Number)
+### **.lighten**( amount: Number )
 Increases colour's lightness in the HSL colour space by said amount.
 
-#### .darken(amount: Number)
+### **.darken**( amount: Number )
 Decreases colour's lightness in the HSL colour space by said amount.
 
-#### .saturate(amount: Number)
+### **.saturate**( amount: Number )
 Increases colour's saturation in the HSL colour space by said amount.
 
-#### .desaturate(amount: Number)
+### **.desaturate**( amount: Number )
 Decreases colour's saturation in the HSL colour space by said amount.
+
+<br>
 
 ## Output Methods
 Output methods are end of the chain methods that returns the colour is CSS values of preferred format. <br>
 RGB and HSL methods have [newer space separated notation variant](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#RGB_colors), which be be outputted by setting the `spacing` param to `space`. By default it outputs the good old `comma`.
 
-#### .getHex() : String
+### **.getHex**() : String
 Returns colour in Hex representation.<br>
 If the colour had alpha, it will output the transparency as well.
 
-#### .getRGB(spacing : String) : String
+### **.getRGB**( spacing : String ) : String
 Returns colour in RGB, regardless of transparency. <br>
 
-#### .getRGBA(spacing : String) : String
+### **.getRGBA**( spacing : String ) : String
 Returns colour in RGBA, inclusive of transparency. <br>
 
-#### .getHSL(spacing : String) : String
+### **.getHSL**( spacing : String ) : String
 Returns colour in HSL, regardless of transparency. <br>
 
-#### .getHSLA(spacing : String) : String
+### **.getHSLA**( spacing : String ) : String
 Returns colour in HSLA, inclusive of transparency. <br>
 
+<br>
+
 ## Other Method
-#### .clone() : Object
-Returns a copy of this Prisma instance including operated colour. <br>
+### **.clone**() : Object
+Returns a copy of this PrismaColour instance including operated colour. <br>
 You can clone at anytime during operation.
 
 ---
+<br>
 
 ## Usage Examples
 You can use it somewhere like in [Tailwind CSS](https://github.com/tailwindlabs/tailwindcss) to generate the colour dynamically.
 ``` JS
 // tailwind.config.js
-const Prisma = require('./build/cjs/prisma-colour.js');
+const PrismaColour = require('./build/cjs/prisma-colour.js');
 const BLUE = '#1b61e4';
 
 // Generating a complementary 'primary' and 'secondary' colour scheme.
@@ -109,26 +116,26 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-         '100': new Prisma(BLUE).lighten(20).getHex(),
-         '200': new Prisma(BLUE).lighten(15).getHex(),
-         '300': new Prisma(BLUE).lighten(10).getHex(),
-         '400': new Prisma(BLUE).lighten(5).getHex(),
-         '500': new Prisma(BLUE).lighten(0).getHex(),
-         '600': new Prisma(BLUE).darken(5).getHex(),
-         '700': new Prisma(BLUE).darken(10).getHex(),
-         '800': new Prisma(BLUE).darken(15).getHex(),
-         '900': new Prisma(BLUE).darken(20).getHex(),
+         '100': new PrismaColour(BLUE).lighten(20).getHex(),
+         '200': new PrismaColour(BLUE).lighten(15).getHex(),
+         '300': new PrismaColour(BLUE).lighten(10).getHex(),
+         '400': new PrismaColour(BLUE).lighten(5).getHex(),
+         '500': new PrismaColour(BLUE).lighten(0).getHex(),
+         '600': new PrismaColour(BLUE).darken(5).getHex(),
+         '700': new PrismaColour(BLUE).darken(10).getHex(),
+         '800': new PrismaColour(BLUE).darken(15).getHex(),
+         '900': new PrismaColour(BLUE).darken(20).getHex(),
        },
         secondary: {
-         '100': new Prisma(BLUE).spin(180).lighten(20).getHex(),
-         '200': new Prisma(BLUE).spin(180).lighten(15).getHex(),
-         '300': new Prisma(BLUE).spin(180).lighten(10).getHex(),
-         '400': new Prisma(BLUE).spin(180).lighten(5).getHex(),
-         '500': new Prisma(BLUE).spin(180).lighten(0).getHex(),
-         '600': new Prisma(BLUE).spin(180).darken(5).getHex(),
-         '700': new Prisma(BLUE).spin(180).darken(10).getHex(),
-         '800': new Prisma(BLUE).spin(180).darken(15).getHex(),
-         '900': new Prisma(BLUE).spin(180).darken(20).getHex(),
+         '100': new PrismaColour(BLUE).spin(180).lighten(20).getHex(),
+         '200': new PrismaColour(BLUE).spin(180).lighten(15).getHex(),
+         '300': new PrismaColour(BLUE).spin(180).lighten(10).getHex(),
+         '400': new PrismaColour(BLUE).spin(180).lighten(5).getHex(),
+         '500': new PrismaColour(BLUE).spin(180).lighten(0).getHex(),
+         '600': new PrismaColour(BLUE).spin(180).darken(5).getHex(),
+         '700': new PrismaColour(BLUE).spin(180).darken(10).getHex(),
+         '800': new PrismaColour(BLUE).spin(180).darken(15).getHex(),
+         '900': new PrismaColour(BLUE).spin(180).darken(20).getHex(),
        }
       }
     },
@@ -138,7 +145,7 @@ module.exports = {
 Or in a [Lit Element](https://github.com/Polymer/lit-element) to create a better interactive styling.
 ``` JS
 import { LitElement, html, css, unsafeCSS } from 'lit-element';
-import Prisma from './build/esm/prisma-colour.js';
+import PrismaColour from './build/esm/prisma-colour.js';
 
 const RED = 'rgb(195, 50, 50)'; // red
 
@@ -160,9 +167,10 @@ class HoverMeButton extends LitElement {
           cursor: pointer;
         }
 
+        /* Hover to for softer red */
         button:hover {
           background: ${unsafeCSS(
-            new Prisma(RED).lighten(17).getRGB()
+            new PrismaColour(RED).lighten(17).getRGB()
           )};
         }
       `,

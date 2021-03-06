@@ -1,16 +1,23 @@
 {
-  "name": "prisma-colour",
-  "version": "1.0.0",
+  "name": "@iantomarcello/prisma-colour",
+  "version": "0.1.0",
   "main": "build/cjs/index.js",
   "module": "build/esm/index.js",
   "description": "Colour converter in JS.",
   "scripts": {
-    "start": "browser-sync start -s --index test/index.html -f test/index.html prisma-colour.js",
+    "start": "browser-sync start -s --index preview/index.html -f preview/index.html prisma-colour.js",
     "build": "rollup -c rollup.config.js"
   },
   "author": "Ian Yong (iantomarcello)",
   "license": "MIT",
-  "keywords": ["color", "colour", "color-converter", "colour-converter", "CSS", "utility"],
+  "keywords": [
+    "color",
+    "colour",
+    "color-converter",
+    "colour-converter",
+    "CSS",
+    "utility"
+  ],
   "dependencies": {},
   "devDependencies": {
     "rollup": "^2.29.0",
