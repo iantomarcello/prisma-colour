@@ -3,7 +3,7 @@ class PrismaColor {
     if ( typeof raw !== 'string' ) {
       throw Error('Prisma Error: Value passed in constructor must be a string of CSS colour value.');
     }
-    this.raw = raw;
+    this.raw = raw.trim();
     this.rgb = new Array;
     this.alpha = 1;
     this.convert(this.raw);
