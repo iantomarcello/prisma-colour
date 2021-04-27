@@ -47,7 +47,10 @@ class PrismaColor {
    *  Split CSS colour values by comma or space.
    */
   _splitBetter(string) {
-    string = string.trim().replaceAll(', ', ',');
+    // TODO: Not supported in V8 yet. Bring this back once it does.
+    // string = string.trim().replaceAll(', ', ',');
+    
+    string = string.trim().split(', ').join(',');
     if ( string.includes(',') ) {
       return string.split(',');
     } else if ( string.includes(' ') ) {
